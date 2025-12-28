@@ -1,57 +1,53 @@
-// "use client";
-
-// export default function Home() {
-//   const handlePost = async () => {
-//     const res = await fetch("/api/post", { method: "POST" });
-//     const data = await res.json();
-//     alert(data.message);
-//   };
-
-//   return (
-//     <div>
-//       <h1>Post Hello World to Twitter</h1>
-//       <button onClick={handlePost}>Post Tweet</button>
-//     </div>
-//   );
-// }
 "use client";
 
 import { useState } from "react";
 
 export default function Home() {
-  const [post, setPost] = useState("");
-  const [response, setResponse] = useState("");
+  const [idea, setIdea] = useState(""); // User input idea
+  const [response, setResponse] = useState(""); // Feedback
+  const [generated, setGenerated] = useState(""); // Generated tweet
 
-  const handlePost = async () => {
-    if (!post.trim()) return;
+  const handleGenerateAndPost = async () => {
+    if (!idea.trim()) return;
 
     try {
       const res = await fetch("/api/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: post }),
+        body: JSON.stringify({ idea }),
       });
+
       const data = await res.json();
-      setResponse(data.message);
-      setPost("");
+
+      if (data.tweetText) setGenerated(data.tweetText);
+      setResponse(data.message || "Tweet posted successfully!");
+      setIdea("");
     } catch (err) {
       console.error(err);
-      setResponse("Failed to post.");
+      setResponse("Failed to generate or post tweet.");
     }
   };
 
   return (
     <div>
-      <h1>Post to Twitter</h1>
+      <h1>AI Tweet Generator</h1>
       <textarea
-        value={post}
-        onChange={(e) => setPost(e.target.value)}
-        placeholder="Write your tweet..."
+        value={idea}
+        onChange={(e) => setIdea(e.target.value)}
+        placeholder="Enter your idea or topic..."
         rows={4}
         cols={50}
       />
       <br />
-      <button onClick={handlePost}>Post Tweet</button>
+      <button onClick={handleGenerateAndPost}>Generate & Post</button>
+
+      {generated && (
+        <div>
+          <h3>Generated Tweet:</h3>
+          <p>{generated}</p>
+        </div>
+      )}
+
       <p>{response}</p>
     </div>
   );

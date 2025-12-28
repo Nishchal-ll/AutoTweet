@@ -1,59 +1,52 @@
-// import { NextResponse } from "next/server";
-// import { TwitterApi } from "twitter-api-v2";
-
-// export async function POST() {
-//   try {
-//     // Initialize Twitter client with your credentials
-//     const client = new TwitterApi({
-//       appKey: process.env.TWITTER_CONSUMER_KEY!,
-//       appSecret: process.env.TWITTER_CONSUMER_SECRET!,
-//       accessToken: process.env.TWITTER_ACCESS_TOKEN!,
-//       accessSecret: process.env.TWITTER_ACCESS_SECRET!,
-//     });
-
-//     // Post "Hello World"
-//     const tweet = await client.v2.tweet("Hello World from Next.js!");
-
-//     return NextResponse.json({
-//       message: "Tweet posted successfully!",
-//       tweet,
-//     });
-//   } catch (err: any) {
-//     console.error("Error posting tweet:", err);
-//     return NextResponse.json(
-//       { message: err.message || "Error posting tweet" },
-//       { status: 500 }
-//     );
-//   }
-// }
 import { NextResponse } from "next/server";
 import { TwitterApi } from "twitter-api-v2";
+import { OpenAI } from "openai";
 
 export async function POST(req: Request) {
   try {
-    const { text } = await req.json();
+    const { idea } = await req.json();
 
-    if (!text || text.trim() === "") {
-      return NextResponse.json({ message: "Text is empty" }, { status: 400 });
+    if (!idea || idea.trim() === "") {
+      return NextResponse.json({ message: "Idea is empty" }, { status: 400 });
     }
 
-    const client = new TwitterApi({
+    // Hugging Face AI generation
+    const hfClient = new OpenAI({
+      baseURL: "https://router.huggingface.co/v1",
+      apiKey: process.env.HF_TOKEN,
+    });
+
+    const completion = await hfClient.chat.completions.create({
+      model: "deepseek-ai/DeepSeek-V3.2:novita",
+      messages: [
+        {
+          role: "user",
+          content: `Create a viral tech tweet based on this idea: ${idea}. No hashtags, no exclamation marks.`,
+        },
+      ],
+    });
+
+    const tweetText =
+      completion.choices?.[0]?.message?.content?.trim() || idea;
+
+    // Post to Twitter
+    const twitterClient = new TwitterApi({
       appKey: process.env.TWITTER_CONSUMER_KEY!,
       appSecret: process.env.TWITTER_CONSUMER_SECRET!,
       accessToken: process.env.TWITTER_ACCESS_TOKEN!,
       accessSecret: process.env.TWITTER_ACCESS_SECRET!,
     });
 
-    const tweet = await client.v2.tweet(text);
+    await twitterClient.v2.tweet(tweetText);
 
     return NextResponse.json({
       message: "Tweet posted successfully!",
-      tweet,
+      tweetText,
     });
   } catch (err: any) {
-    console.error(err);
+    console.error("Error:", err);
     return NextResponse.json(
-      { message: err.message || "Error posting tweet" },
+      { message: err.message || "Failed to generate or post tweet" },
       { status: 500 }
     );
   }
