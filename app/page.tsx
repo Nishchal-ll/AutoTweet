@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import styles from './Dashboard.module.css';
 
 type TweetData = {
   id: string;
