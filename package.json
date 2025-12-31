@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && prisma generate ",
     "start": "next start",
     "lint": "eslint"
   },
@@ -19,7 +19,9 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "twitter-api-v2": "^1.28.0",
-    "twitter-lite": "^1.1.0"
+    "twitter-lite": "^1.1.0",
+    "prisma": "^4.16.2",
+  "@prisma/client": "^4.16.2"
   },
   "devDependencies": {
     "@prisma/client": "^4.16.2",
