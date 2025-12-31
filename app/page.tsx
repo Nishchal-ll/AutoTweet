@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
-import styles from './Dashboard.module.css';
 
 type TweetData = {
   id: string;
@@ -15,27 +14,25 @@ type TweetData = {
 export default function Dashboard() {
   const { data: session, status } = useSession();
 
-  // Manual Tweet state
   const [manualTweet, setManualTweet] = useState("");
   const [manualSchedule, setManualSchedule] = useState("");
 
-  // AI Tweet state
   const [idea, setIdea] = useState("");
   const [aiTweet, setAiTweet] = useState("");
+
   const [aiSchedule, setAiSchedule] = useState("");
 
-  // Dashboard & response
   const [tweets, setTweets] = useState<TweetData[]>([]);
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch all tweets
+  // Fetch all tweets from Prisma
   const fetchTweets = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/tweets");
       const data = await res.json();
-      setTweets(data.tweets);
+      setTweets(data.tweets || []);
     } catch (err) {
       console.error(err);
     }
@@ -55,7 +52,7 @@ export default function Dashboard() {
     );
   }
 
-  // Separate function for Manual Tweet
+  // Manual Tweet
   const sendManualTweet = async () => {
     if (!manualTweet.trim()) return;
 
@@ -63,7 +60,11 @@ export default function Dashboard() {
       const res = await fetch("/api/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea: manualTweet, scheduledAt: manualSchedule || null, isAI: false }),
+        body: JSON.stringify({
+          idea: manualTweet,
+          scheduledAt: manualSchedule || null,
+          isAI: false,
+        }),
       });
       const data = await res.json();
 
@@ -82,7 +83,7 @@ export default function Dashboard() {
     }
   };
 
-  // Separate function for AI Tweet
+  // AI Tweet
   const sendAiTweet = async () => {
     if (!idea.trim()) return;
 
@@ -90,7 +91,11 @@ export default function Dashboard() {
       const res = await fetch("/api/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea, scheduledAt: aiSchedule || null, isAI: true }),
+        body: JSON.stringify({
+          idea,
+          scheduledAt: aiSchedule || null,
+          isAI: true,
+        }),
       });
       const data = await res.json();
 
@@ -113,7 +118,9 @@ export default function Dashboard() {
   const postedTweets = tweets.filter((t) => t.status === "POSTED");
   const upcomingTweets = tweets
     .filter((t) => t.status === "SCHEDULED")
-    .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime());
+    .sort(
+      (a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime()
+    );
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -203,7 +210,9 @@ export default function Dashboard() {
               {upcomingTweets.map((tweet) => (
                 <tr key={tweet.id} style={{ borderBottom: "1px solid #eee" }}>
                   <td style={{ padding: "0.5rem" }}>{tweet.content}</td>
-                  <td style={{ padding: "0.5rem" }}>{new Date(tweet.scheduledAt!).toLocaleString()}</td>
+                  <td style={{ padding: "0.5rem" }}>
+                    {new Date(tweet.scheduledAt!).toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
