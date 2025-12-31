@@ -231,24 +231,36 @@
 
 "use client";
 
-import { useEffect, } from "react";
-import { useSession ,} from "next-auth/react";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
-   
   const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") return;
 
     if (session) {
-      router.push("/dashboard"); // if logged in → go to dashboard
+      router.push("/dashboard");
     } else {
-      router.push("/login"); // if not logged in → go to login
+      router.push("/login");
     }
   }, [session, status, router]);
 
-  return <p>Welcomee</p>;
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        {/* White loading spinner */}
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 border-4 border-zinc-900 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-transparent border-t-white rounded-full animate-spin"></div>
+        </div>
+        
+        {/* Optional loading text */}
+        <p className="text-zinc-500 text-sm">Loading...</p>
+      </div>
+    </div>
+  );
 }
