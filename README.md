@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Auto Tweet App
 
-## Getting Started
+**Auto Tweet** is a web application that allows users to post and schedule tweets directly from a dashboard. It also supports AI-generated tweets using HuggingFace models. Built with **Next.js**, **NextAuth.js**, **Prisma**, and **Twitter API v2**, this app offers a seamless experience for tech enthusiasts, content creators, and marketers.
 
-First, run the development server:
+---
+
+## Features
+
+- **User Authentication** with Twitter via NextAuth.js
+- **Create Tweets** manually or with AI assistance
+- **Schedule Tweets** for later posting
+- **Dashboard** to view your posts and scheduled tweets
+- **Responsive UI** with modern design and animations
+- **Serverless Deployment** on Vercel
+
+---
+
+## Screenshots
+
+### Main Page (Login)
+
+![Main Page](https://github.com/Nishchal-ll/AutoTweet/blob/092fd3a6440fb6d3ddc21457a44e6cd6416812da/homepage.png)
+*Login with your Twitter account to start posting.*
+
+### Dashboard
+
+![Dashboard](https://github.com/Nishchal-ll/AutoTweet/blob/092fd3a6440fb6d3ddc21457a44e6cd6416812da/dashboard.png)  
+*View all your posted and scheduled tweets.*
+
+### Create Page
+
+![Create Page](https://github.com/Nishchal-ll/AutoTweet/blob/092fd3a6440fb6d3ddc21457a44e6cd6416812da/createpost.png)  
+*Compose a new tweet manually or generate one using AI. Optionally schedule it for later.*
+
+---
+
+## Tech Stack
+
+- **Frontend:** Next.js 13, React, TailwindCSS  
+- **Backend:** Next.js API Routes, Prisma, PostgreSQL  
+- **Authentication:** NextAuth.js with Twitter OAuth  
+- **AI Integration:** HuggingFace API (Chat Completions)  
+- **Deployment:** Vercel  
+
+---
+
+## Setup & Running Locally
+
+1. **Clone the repository**
 
 ```bash
+git clone https://github.com/Nishchal-ll/auto-tweet.git
+cd auto-tweet
+
+2. **Install Dependencies**
+npm install
+Setup .env
+
+3. **Create a .env file in the root and add:""
+
+env
+Copy code
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+NEXTAUTH_SECRET=<your-random-generated-secret>
+TWITTER_CLIENT_ID=<your-twitter-client-id>
+TWITTER_CLIENT_SECRET=<your-twitter-client-secret>
+HF_TOKEN=<your-huggingface-api-token>
+Run Prisma migrations
+
+bash
+Copy code
+npx prisma migrate dev
+Start the development server
+
+bash
+Copy code
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open http://localhost:3000 in your browser.
