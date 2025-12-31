@@ -89,7 +89,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -103,14 +103,31 @@ export default function PostPage() {
   const [activeNav, setActiveNav] = useState("create");
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!session) {
-    router.push("/login");
+  // if (!session) {
+  //   router.push("/login");
+  //   return (
+  //     <div className="min-h-screen bg-black flex items-center justify-center">
+  //       <p className="text-white">Redirecting...</p>
+  //     </div>
+  //   );
+  // }
+   useEffect(() => {
+    if (session === null) {
+      router.push("/login");
+    }
+  }, [session, router]);
+
+  // Show loading while session is undefined
+  if (session === undefined) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <p className="text-white">Redirecting...</p>
+        <p className="text-white">Loading...</p>
       </div>
     );
   }
+
+  // If user is not authenticated, render nothing (redirect will happen)
+  if (session === null) return null;
 
   const sendTweet = async (isAI: boolean) => {
     if (!idea.trim()) return;
